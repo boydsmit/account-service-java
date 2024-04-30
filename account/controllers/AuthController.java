@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.management.openmbean.KeyAlreadyExistsException;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -25,7 +27,10 @@ public class AuthController {
         } catch (ValidationException exception) {
             BadRequestResponse badRequestResponse = new BadRequestResponse("/api/signup");
             System.out.println(exception.getMessage());
-           return ResponseEntity.badRequest().body(badRequestResponse.getStatus());
+            return ResponseEntity.badRequest().body(badRequestResponse.getStatus());
+        } catch (KeyAlreadyExistsException exception) {
+            BadRequestResponse badRequestResponse = new BadRequestResponse("/api/signup", "User exist!");
+            return ResponseEntity.badRequest().body(badRequestResponse.getStatus());
         }
     }
 }
