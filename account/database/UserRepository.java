@@ -1,6 +1,7 @@
 package account.database;
 
 import account.models.UserModel;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.sql.*;
@@ -36,7 +37,7 @@ public class UserRepository {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastname);
             preparedStatement.setString(3, email);
-            preparedStatement.setString(4, password);
+            preparedStatement.setString(4, new BCryptPasswordEncoder().encode(password));
             preparedStatement.executeUpdate();
             ResultSet set = preparedStatement.getGeneratedKeys();
             set.next();
@@ -46,6 +47,18 @@ public class UserRepository {
             System.out.println(exception.getMessage());
         }
         return -1;
+    }
+
+    public void ChangeUserPassword(String password, String username) {
+        String encryptedPassword = new BCryptPasswordEncoder().encode(password);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE users SET password = ? WHERE email = ?");
+            preparedStatement.setString(1, encryptedPassword);
+            preparedStatement.setString(2, username);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public UserModel getUserByEmail(String email) {

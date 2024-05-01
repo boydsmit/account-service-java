@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions().disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/actuator/shutdown").permitAll()
-                        .requestMatchers("/api/empl/***").hasRole("USER")
+                        .requestMatchers("/api/empl/***", "/api/auth/changepass").hasRole("USER")
                 )
                 .sessionManagement(sessions -> sessions
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
